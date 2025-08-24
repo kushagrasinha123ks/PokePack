@@ -1,0 +1,13 @@
+https://pokeapi.co/api/v2/pokemon/ - 20 pokemon result by default
+https://pokeapi.co/api/v2/pokemon/{pokemon} 
+sprites - image
+ - sprites/other/showdown/front_shiny - .gif
+ - sprites/front_shiny - .png
+ - sprites/other/home/front_shiny - .png
+cries/latest - .ogg cry 
+weight
+base_experience
+Attributes
+    stats/{0/1/2/3/4/5}/stat/name - attribute's name
+    stats/{0/1/2/3/4/5}/base_stat - attribute value
+
