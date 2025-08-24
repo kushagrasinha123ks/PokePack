@@ -13,26 +13,31 @@ const App = () => {
 
   const handleSearch = (value) => {
     setSearch(value);
+    setError('');
+  }
+
+  const handleHomeClick = () => {
+    setSearch(''); 
+    setError('');
   }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        let response = null;
-        let responseJSON = null;
-        if(search===''){
-          response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
-          responseJSON = await response.json();
-          setPokeList(responseJSON.results);
+        setError('');
+        const url = search === '' 
+          ? "https://pokeapi.co/api/v2/pokemon?limit=20"
+          : `https://pokeapi.co/api/v2/pokemon/${search}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Pokemon not found!`);
         }
-        else{
-          response = await fetch(`https://pokeapi.co/api/v2/pokemon/${search}`);
-          responseJSON = await response.json();
-          setPokeList([responseJSON]);
-        }
+        const data = await response.json();
+        setPokeList(search === '' ? data.results : [data]);
       } catch (error) {
         setError(error);
+        setPokeList([]);
       } finally {
         setLoading(false); 
       }
@@ -45,7 +50,7 @@ const App = () => {
     {error ? (
       <main className="h-screen flex items-center justify-center">
         <h1 className="text-center text-red-600 text-2xl">
-          {'Pokemon not found!'}
+          {error}
         </h1>
       </main>
     ) : isLoading ? (
@@ -54,8 +59,8 @@ const App = () => {
       </main>
     ) : (
       <>
-        <Banner />
-        <SearchBar onSearch={handleSearch}/>
+        <Banner onHomeClick={handleHomeClick} />
+        <SearchBar onSearch={handleSearch} />
         {(search === '') ? (
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 m-10 justify-items-center">
             {Array.isArray(pokeList) && 
@@ -63,7 +68,7 @@ const App = () => {
                 <PokeCard
                   key={`${index}${poke.name}`} 
                   pokeName={poke.name}
-                  pokeUrl={poke.url || `https://pokeapi.co/api/v2/pokemon/${poke.name}`}
+                  pokeUrl={poke.url}
                 />
               ))
             }
@@ -71,8 +76,8 @@ const App = () => {
         ) : (
           <div className="flex justify-center items-start mt-16 mb-16 px-4">  
             <PokeCard
-              key={`${pokeList[0].order}${pokeList[0].name}`} 
-              pokeName={pokeList[0].name}
+              key={`${pokeList[0]?.order}-${pokeList[0]?.name}`} 
+              pokeName={pokeList[0]?.name}
               pokeUrl={`https://pokeapi.co/api/v2/pokemon/${pokeList[0].name}`}
             />
           </div>

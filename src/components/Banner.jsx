@@ -1,7 +1,7 @@
 import logo from '../assets/banner.png';
 import { useState, useEffect } from 'react';
 
-const Banner = () => {
+const Banner = ({onHomeClick}) => {
     const [isBouncing, setIsBouncing] = useState(true);
 
     useEffect(() => {
@@ -15,11 +15,15 @@ const Banner = () => {
     return (
         <>
             <div className="relative flex items-center justify-center">
-                <img 
+                <button
+                    onClick={onHomeClick} className="cursor-pointer"
+                >
+                    <img 
                     className={`w-80 h-40 ${isBouncing ? 'animate-[bounce_2s_2]' : ''}`} 
                     alt="banner" 
                     src={logo}
-                />
+                    />
+                </button>
             </div>
         </>
     );

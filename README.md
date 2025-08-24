@@ -1,6 +1,6 @@
 # Pokepack
 
-Pokepack is a beautiful React web app that lets you search and explore Pokémon using the [PokeAPI](https://pokeapi.co/). It features a modern UI, animated cards, search functionality, and is styled with Tailwind CSS.
+Pokepack is a React web app that lets you search and explore Pokémon using the [PokeAPI](https://pokeapi.co/). It features a modern UI, animated cards, search functionality, and is styled with Tailwind CSS.
 
 ## Features
 - Search for any Pokémon by name
