@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
-const PokeCard = (props) => {
-  const { pokeName, pokeUrl } = props;
+const PokeCard = ({ pokeName, pokeUrl }) => {
   const [Data, setData] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,7 +23,7 @@ const PokeCard = (props) => {
         const data = await response.json();
         setData(data);
       } catch (error) {
-        console.error('Error fetching Pokemon data:', error);
+        console.error("Error fetching Pokemon data:", error);
       } finally {
         setLoading(false);
       }
@@ -27,7 +33,6 @@ const PokeCard = (props) => {
 
   const getPokemonImage = () => {
     if (!Data?.sprites) return null;
-    
     return (
       Data.sprites.other?.showdown?.front_shiny ||
       Data.sprites.front_shiny ||
@@ -38,9 +43,9 @@ const PokeCard = (props) => {
 
   if (isLoading) {
     return (
-        <main className="h-screen flex items-center justify-center">
-            <LoadingSpinner />
-        </main>
+      <main className="h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </main>
     );
   }
 
@@ -50,62 +55,68 @@ const PokeCard = (props) => {
 
   return (
     <div className="relative w-full max-w-md rounded overflow-hidden shadow-lg bg-white group cursor-pointer transition-all duration-300 hover:scale-105">
-        
-        <div className="relative z-10">
-
+      <div className="relative z-10">
         <div className="relative text-center p-4 bg-gray-50">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FFCE1B] to-transparent opacity-0 group-hover:opacity-60 group-hover:animate-pulse transition-all duration-500 p-[2px] rounded-t">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FFCE1B] to-transparent opacity-0 group-hover:opacity-60 group-hover:animate-pulse transition-all duration-500 p-[2px] rounded-t">
             <div className="w-full h-full bg-gray-50 rounded-t"></div>
-            </div> 
-            
-            <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#FFCE1B] group-hover:shadow-[0_0_10px_#FFCE1B] transition-all duration-300 rounded-t"></div>
-            
-            <div className="relative z-10">
-            {pokemonImage && (
-                <img 
-                src={pokemonImage} 
-                alt={pokeName}
-                className="mx-auto w-24 h-24 object-contain"
+          </div>
+          <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#FFCE1B] group-hover:shadow-[0_0_10px_#FFCE1B] transition-all duration-300 rounded-t"></div>
+
+          <div className="relative z-10 flex flex-col items-center justify-center h-48">
+            {windowWidth >= 460 && pokemonImage ? (
+              <div className="w-32 h-32 flex items-center justify-center mx-auto">
+                <img
+                  src={pokemonImage}
+                  alt={pokeName}
+                  className="max-w-full max-h-full object-contain scale-110"
                 />
-            )}
-            <h2 className="text-xl font-bold text-blue-600 mt-2">
-                #{Data.id} - {pokeName.charAt(0).toUpperCase() + pokeName.slice(1)}
+              </div>
+            ) : null}
+
+            <h2 className="text-xl font-bold text-blue-600 mt-2 text-center">
+              #{Data.id} - {pokeName.charAt(0).toUpperCase() + pokeName.slice(1)}
             </h2>
-            </div>
+          </div>
         </div>
 
-        <div className="p-4">
-            <table className="w-full border-collapse border border-gray-400">
+        <div className="p-4 min-h-[300px] flex">
+          <table className="w-full border-collapse border border-gray-400">
             <tbody>
-                <tr className="bg-gray-200">
-                <td className="border border-gray-400 p-2 font-bold text-center">Weight</td>
-                <td className="border border-gray-400 p-2 text-red-600 text-center font-bold">
-                    {Data.weight}
+              <tr className="bg-gray-200">
+                <td className="border border-gray-400 p-2 font-bold text-center text-xs sm:text-base">
+                  Weight
                 </td>
-                </tr>
-                <tr>
-                <td className="border border-gray-400 p-2 font-bold text-center">Base Experience</td>
-                <td className="border border-gray-400 p-2 text-red-600 text-center font-bold">
-                    {Data.base_experience || 'N/A'}
+                <td className="border border-gray-400 p-2 text-red-600 text-center font-bold text-xs sm:text-base">
+                  {Data.weight}
                 </td>
-                </tr>
-                {Data.stats?.map((stat, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
-                    <td className="border border-gray-400 p-2 font-bold text-center">
-                    {stat.stat.name.charAt(0).toUpperCase() + stat.stat.name.slice(1).replace('-', ' ')}
-                    </td>
-                    <td className="border border-gray-400 p-2 text-red-600 text-center font-bold">
+              </tr>
+              <tr>
+                <td className="border border-gray-400 p-2 font-bold text-center text-xs sm:text-base">
+                  Base Experience
+                </td>
+                <td className="border border-gray-400 p-2 text-red-600 text-center font-bold text-xs sm:text-base">
+                  {Data.base_experience || "N/A"}
+                </td>
+              </tr>
+              {Data.stats?.map((stat, index) => (
+                <tr key={index} className={index % 2 === 0 ? "bg-gray-200" : ""}>
+                  <td className="border border-gray-400 p-2 font-bold text-center text-xs sm:text-base">
+                    {stat.stat.name
+                      .charAt(0)
+                      .toUpperCase() +
+                      stat.stat.name.slice(1).replace("-", " ")}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-red-600 text-center font-bold text-xs sm:text-base">
                     {stat.base_stat}
-                    </td>
+                  </td>
                 </tr>
-                ))}
+              ))}
             </tbody>
-            </table>
+          </table>
         </div>
-        </div>
+      </div>
     </div>
-    );
-
+  );
 };
 
 export default PokeCard;

@@ -54,7 +54,7 @@ module.exports = {
 ### 4. Build Tailwind CSS
 To generate the output CSS and watch for changes:
 ```bash
-npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch
+npx tailwindcss -i ./src/index.css -o ./src/output.css --watch
 ```
 
 ### 5. Run the app
